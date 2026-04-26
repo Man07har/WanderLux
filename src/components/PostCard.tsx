@@ -123,7 +123,7 @@ export const PostCard = ({ post, index }: Props) => {
           <div className="mt-4 space-y-2 border-t border-border/60 pt-3">
             {comments?.map(c => (
               <div key={c.id} className="text-sm">
-                <span className="font-semibold mr-2">{(c as any).profiles?.handle ?? "user"}</span>
+                <span className="font-semibold mr-2">{(c as unknown as { profiles?: { handle?: string } }).profiles?.handle ?? "user"}</span>
                 <span>{c.body}</span>
               </div>
             ))}

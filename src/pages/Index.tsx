@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { MobileNav } from "@/components/MobileNav";
 import { Hero } from "@/components/Hero";
@@ -10,30 +10,27 @@ import { NewPostDialog } from "@/components/NewPostDialog";
 import { usePosts } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
 import { Search, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Index = () => {
-  const [active, setActive] = useState("feed");
   const [composing, setComposing] = useState(false);
   const { data: posts, isLoading } = usePosts();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
 
-  const handleNav = (id: string) => {
-    if (id === "new") {
-      user ? setComposing(true) : navigate("/auth");
-      return;
+  useEffect(() => {
+    if (params.get("new") === "1") {
+      if (user) setComposing(true); else navigate("/auth");
+      params.delete("new"); setParams(params, { replace: true });
     }
-    if (id === "profile") {
-      user ? navigate("/profile") : navigate("/auth");
-      return;
-    }
-    setActive(id);
-  };
+  }, [params, user, navigate, setParams]);
+
+  const handleCreate = () => user ? setComposing(true) : navigate("/auth");
 
   return (
     <div className="min-h-screen flex w-full">
-      <Sidebar active={active} onChange={handleNav} onCreate={() => user ? setComposing(true) : navigate("/auth")} />
+      <Sidebar onCreate={handleCreate} />
 
       <main className="flex-1 min-w-0 px-4 sm:px-8 py-6 pb-24 lg:pb-8">
         <header className="lg:hidden flex items-center justify-between mb-6">
@@ -41,18 +38,18 @@ const Index = () => {
             <div className="w-8 h-8 rounded-full bg-gradient-gold" />
             <span className="font-display text-xl font-semibold">Wanderlux</span>
           </div>
-          <button className="p-2 rounded-full bg-secondary/60"><Search className="w-4 h-4" /></button>
+          <button onClick={() => navigate("/search")} className="p-2 rounded-full bg-secondary/60"><Search className="w-4 h-4" /></button>
         </header>
 
         <div className="flex gap-8 max-w-6xl mx-auto">
           <div className="flex-1 min-w-0 space-y-8">
-            <Hero onCta={() => user ? setComposing(true) : navigate("/auth")} />
+            <Hero onCta={handleCreate} />
             <Stories onCreate={() => setComposing(true)} />
             <AtlasMap />
 
             <div className="flex items-baseline justify-between pt-2">
               <h2 className="font-display text-2xl font-semibold">Latest from the trail</h2>
-              <button className="text-xs text-muted-foreground hover:text-primary">Filter</button>
+              <button onClick={() => navigate("/explore")} className="text-xs text-muted-foreground hover:text-primary">Explore all</button>
             </div>
 
             {isLoading ? (
@@ -62,7 +59,7 @@ const Index = () => {
                 <p className="font-display text-xl mb-2">The trail is quiet.</p>
                 <p className="text-sm text-muted-foreground mb-5">Be the first to pin a moment.</p>
                 <button
-                  onClick={() => user ? setComposing(true) : navigate("/auth")}
+                  onClick={handleCreate}
                   className="bg-gradient-gold text-primary-foreground font-semibold px-5 py-2.5 rounded-full shadow-glow"
                 >
                   Share your first photo
@@ -79,7 +76,7 @@ const Index = () => {
         </div>
       </main>
 
-      <MobileNav active={active} onChange={handleNav} />
+      <MobileNav onCreate={handleCreate} />
 
       <NewPostDialog open={composing} onOpenChange={setComposing} />
     </div>

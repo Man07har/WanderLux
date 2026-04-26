@@ -4,13 +4,141 @@
 @tailwind components;
 @tailwind utilities;
 
-/* REQUIRED for shadcn */
 @layer base {
   :root {
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 222 84% 4.9%;
-    --background: 0 0% 100%;
-    --foreground: 222 84% 4.9%;
+    --background: 30 20% 97%;
+    --foreground: 30 10% 8%;
+
+    --card: 30 20% 95%;
+    --card-foreground: 30 10% 8%;
+
+    --popover: 30 20% 97%;
+    --popover-foreground: 30 10% 8%;
+
+    --primary: 38 88% 58%;
+    --primary-foreground: 30 10% 4%;
+
+    --secondary: 30 15% 90%;
+    --secondary-foreground: 30 10% 12%;
+
+    --muted: 30 15% 90%;
+    --muted-foreground: 30 8% 48%;
+
+    --accent: 0 78% 62%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 38 88% 58%;
+
+    --gold: 38 88% 58%;
+
+    --radius: 0.75rem;
+
+    --chart-1: 38 88% 58%;
+    --chart-2: 24 70% 48%;
+    --chart-3: 34 60% 40%;
+    --chart-4: 28 80% 55%;
+    --chart-5: 40 95% 62%;
+
+    --sidebar-background: 30 20% 97%;
+    --sidebar-foreground: 30 10% 8%;
+    --sidebar-primary: 38 88% 58%;
+    --sidebar-primary-foreground: 30 10% 4%;
+    --sidebar-accent: 30 15% 90%;
+    --sidebar-accent-foreground: 30 10% 12%;
+    --sidebar-border: 30 15% 88%;
+    --sidebar-ring: 38 88% 58%;
   }
+
+  .dark {
+    --background: 30 10% 6%;
+    --foreground: 30 15% 92%;
+
+    --card: 30 10% 9%;
+    --card-foreground: 30 15% 92%;
+
+    --popover: 30 10% 8%;
+    --popover-foreground: 30 15% 92%;
+
+    --primary: 38 88% 58%;
+    --primary-foreground: 30 10% 4%;
+
+    --secondary: 30 10% 14%;
+    --secondary-foreground: 30 15% 88%;
+
+    --muted: 30 10% 14%;
+    --muted-foreground: 30 8% 55%;
+
+    --accent: 0 78% 62%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 10% 16%;
+    --input: 30 10% 16%;
+    --ring: 38 88% 58%;
+
+    --gold: 38 88% 58%;
+
+    --sidebar-background: 30 10% 8%;
+    --sidebar-foreground: 30 15% 92%;
+    --sidebar-primary: 38 88% 58%;
+    --sidebar-primary-foreground: 30 10% 4%;
+    --sidebar-accent: 30 10% 14%;
+    --sidebar-accent-foreground: 30 15% 88%;
+    --sidebar-border: 30 10% 16%;
+    --sidebar-ring: 38 88% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, hsl(38 88% 58%), hsl(28 80% 50%));
+  }
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+  .shadow-glow {
+    box-shadow: 0 0 20px hsl(38 88% 58% / 0.3), 0 0 40px hsl(38 88% 58% / 0.1);
+  }
+  .shadow-cinema {
+    box-shadow: 0 4px 24px hsl(0 0% 0% / 0.08), 0 1px 4px hsl(0 0% 0% / 0.04);
+  }
+  .font-display {
+    font-family: 'Fraunces', serif;
+  }
+  .grain {
+    position: relative;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Dark mode by default */
+html {
+  color-scheme: dark;
+}
+html:not(.light) {
+  @apply dark;
 }

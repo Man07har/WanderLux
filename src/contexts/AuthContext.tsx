@@ -28,9 +28,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadProfile = async (uid: string) => {
-    const { data } = await supabase.from("profiles").select("*").eq("id", uid).maybeSingle();
-    setProfile(data as Profile | null);
+  const loadProfile = async (uid: string, retries = 3) => {
+    for (let i = 0; i <= retries; i++) {
+      const { data, error } = await supabase.from("profiles").select("*").eq("id", uid).maybeSingle();
+      if (error) console.error("Profile load error:", error);
+      if (data) {
+        setProfile(data as Profile);
+        return;
+      }
+      if (i < retries) await new Promise(r => setTimeout(r, 500));
+    }
+    setProfile(null);
   };
 
   useEffect(() => {

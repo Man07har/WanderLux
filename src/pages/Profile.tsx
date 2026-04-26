@@ -1,5 +1,6 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { AppShell } from "@/components/AppShell";
 import { Sidebar } from "@/components/Sidebar";
 import { MobileNav } from "@/components/MobileNav";
 import { useUserPosts } from "@/hooks/usePosts";
@@ -12,11 +13,20 @@ const Profile = () => {
   const navigate = useNavigate();
   const { data: posts } = useUserPosts(user?.id);
 
-  if (!user || !profile) return null;
+  if (!user) return <Navigate to="/auth" replace />;
+  if (!profile) return (
+    <AppShell narrow>
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+            <h2 className="font-display text-2xl font-semibold mb-2">Profile Unavailable</h2>
+            <p className="text-muted-foreground text-sm max-w-md">We couldn't load your profile. Please try refreshing or check your connection.</p>
+            <button onClick={() => window.location.reload()} className="px-4 py-2 mt-4 bg-secondary rounded-lg text-sm border border-border">Refresh</button>
+        </div>
+    </AppShell>
+  );
 
   return (
     <div className="min-h-screen flex w-full">
-      <Sidebar active="profile" onChange={(id) => id === "feed" ? navigate("/") : null} onCreate={() => navigate("/")} />
+      <Sidebar onCreate={() => navigate("/?new=1")} />
 
       <main className="flex-1 min-w-0 px-4 sm:px-10 py-8 pb-24 lg:pb-10 max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row gap-8 items-start sm:items-center mb-10">
@@ -33,7 +43,7 @@ const Profile = () => {
           <div className="flex-1">
             <div className="flex items-center gap-4 flex-wrap">
               <h1 className="font-display text-3xl font-semibold">{profile.display_name}</h1>
-              <button className="px-4 py-1.5 text-sm font-semibold bg-secondary border border-border rounded-full hover:border-primary transition-colors flex items-center gap-1.5">
+              <button onClick={() => navigate("/settings")} className="px-4 py-1.5 text-sm font-semibold bg-secondary border border-border rounded-full hover:border-primary transition-colors flex items-center gap-1.5">
                 <Settings className="w-3.5 h-3.5" /> Edit profile
               </button>
               <button onClick={signOut} className="text-muted-foreground hover:text-foreground" title="Sign out">
@@ -72,7 +82,7 @@ const Profile = () => {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
               {posts.map(p => (
-                <div key={p.id} className="aspect-square overflow-hidden rounded-md bg-muted group relative">
+                <Link to={`/post/${p.id}`} key={p.id} className="aspect-square overflow-hidden rounded-md bg-muted group relative">
                   <img src={p.image_url} alt={p.caption ?? ""} loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   {p.location && (
@@ -80,14 +90,14 @@ const Profile = () => {
                       <p className="text-xs text-white flex items-center gap-1"><MapPin className="w-3 h-3 text-primary" />{p.location}</p>
                     </div>
                   )}
-                </div>
+                </Link>
               ))}
             </div>
           )}
         </div>
       </main>
 
-      <MobileNav active="profile" onChange={(id) => id === "feed" ? navigate("/") : null} />
+      <MobileNav onCreate={() => navigate("/?new=1")} />
     </div>
   );
 };
